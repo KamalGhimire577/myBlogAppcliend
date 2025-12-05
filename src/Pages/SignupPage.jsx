@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../Component/Navbar";
 import Footer from "../Component/Footer";
 import { Link } from "react-router-dom";
+import BackButton from "../Component/BackButton";
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -54,11 +55,14 @@ const SignupPage = () => {
 
         <form
           onSubmit={handleSubmit}
-          className="relative flex flex-col gap-6 bg-[#270082] p-8 rounded-3xl w-full max-w-lg z-10"
+          className="relative flex flex-col gap-4 bg-[#270082] p-6 rounded-3xl w-full max-w-md z-10"
         >
-          <h1 className="text-center text-white text-5xl font-bold tracking-wide">
-            Sign Up
-          </h1>
+          <div className="flex items-center justify-between">
+            <BackButton className="w-8 h-8" />
+            <h1 className="text-center text-white text-3xl font-bold tracking-wide flex-1">
+              Sign Up
+            </h1>
+          </div>
 
           <input
             type="text"
@@ -67,7 +71,7 @@ const SignupPage = () => {
             value={formData.userName}
             onChange={handleChange}
             required
-            className="w-full px-6 py-3 rounded-full text-xl bg-[#270082] border-2 border-[#7A0BC0] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-[#fa58b6]"
+            className="w-full px-4 py-2 rounded-full text-lg bg-[#270082] border-2 border-[#7A0BC0] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-[#fa58b6]"
           />
           <input
             type="email"
@@ -76,7 +80,7 @@ const SignupPage = () => {
             value={formData.email}
             onChange={handleChange}
             required
-            className="w-full px-6 py-3 rounded-full text-xl bg-[#270082] border-2 border-[#7A0BC0] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-[#fa58b6]"
+            className="w-full px-4 py-2 rounded-full text-lg bg-[#270082] border-2 border-[#7A0BC0] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-[#fa58b6]"
           />
           <input
             type="text"
@@ -85,7 +89,7 @@ const SignupPage = () => {
             value={formData.phone}
             onChange={handleChange}
             required
-            className="w-full px-6 py-3 rounded-full text-xl bg-[#270082] border-2 border-[#7A0BC0] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-[#fa58b6]"
+            className="w-full px-4 py-2 rounded-full text-lg bg-[#270082] border-2 border-[#7A0BC0] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-[#fa58b6]"
           />
           <input
             type="password"
@@ -94,7 +98,7 @@ const SignupPage = () => {
             value={formData.password}
             onChange={handleChange}
             required
-            className="w-full px-6 py-3 rounded-full text-xl bg-[#270082] border-2 border-[#7A0BC0] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-[#fa58b6]"
+            className="w-full px-4 py-2 rounded-full text-lg bg-[#270082] border-2 border-[#7A0BC0] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-[#fa58b6]"
           />
           <input
             type="password"
@@ -103,17 +107,17 @@ const SignupPage = () => {
             value={formData.confirmPassword}
             onChange={handleChange}
             required
-            className="w-full px-6 py-3 rounded-full text-xl bg-[#270082] border-2 border-[#7A0BC0] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-[#fa58b6]"
+            className="w-full px-4 py-2 rounded-full text-lg bg-[#270082] border-2 border-[#7A0BC0] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-[#fa58b6]"
           />
 
           <button
             type="submit"
-            className="w-full py-3 mt-2 bg-gradient-to-r from-[#7a0bc0] to-[#fa58b6] text-white text-2xl font-bold rounded-xl shadow-lg hover:scale-105 transition-transform"
+            className="w-full py-2 mt-2 bg-gradient-to-r from-[#7a0bc0] to-[#fa58b6] text-white text-xl font-bold rounded-xl shadow-lg hover:scale-105 transition-transform"
           >
             Sign Up
           </button>
 
-          <p className="text-center text-white">
+          <p className="text-center text-white text-sm">
             Already have an account?{" "}
          <Link to="/login"  > <span className="text-[#fa58b6] cursor-pointer underline">
               Login

@@ -5,54 +5,55 @@ import {
   FaInstagram,
   FaLinkedinIn,
 } from "react-icons/fa";
+import Logo from "./logo";
+
 function Footer() {
   return (
-    <footer className="relative w-full text-white bg-gradient-to-r from-blue-600 via-white to-rose-500">
-      {/* Overlay for dark effect (optional, remove if you want clean gradient) */}
-      <div className="absolute inset-0 bg-black/50"></div>
-
+    <footer className="relative w-full mt-16 bg-white border-t border-slate-100 rounded-t-3xl shadow-lg">
       {/* Content */}
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Grid */}
-        <div className="py-12 flex flex-col lg:flex-row items-center justify-between gap-8">
+      <div className="relative mx-auto max-w-6xl px-6 lg:px-12">
+        {/* Main Footer Content */}
+        <div className="py-8 flex flex-col lg:flex-row items-center justify-between gap-8">
           {/* Brand */}
-          <Link to="/" className="flex justify-center">
-            <span className="text-2xl font-bold text-indigo-900">MyBrand</span>
-          </Link>
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center">
+              <Logo />
+            </Link>
+          </div>
 
           {/* Navigation */}
-          <ul className="flex flex-col sm:flex-row text-center gap-4 sm:gap-8 text-indigo-900 font-medium">
-            <li><Link to="/" className="hover:text-gray-700">Home</Link></li>
-            <li><Link to="/products" className="hover:text-gray-700">Products</Link></li>
-            <li><Link to="/resources" className="hover:text-gray-700">Resources</Link></li>
-            <li><Link to="/blog" className="hover:text-gray-700">Blog</Link></li>
-            <li><Link to="/support" className="hover:text-gray-700">Support</Link></li>
+          <ul className="flex flex-col sm:flex-row text-center gap-4 sm:gap-8 font-dm text-sm font-medium text-slate-700">
+            <li><Link to="/" className="hover:text-blue-600 transition-colors">Home</Link></li>
+            <li><Link to="/blog" className="hover:text-blue-600 transition-colors">Blog</Link></li>
+            <li><Link to="/about" className="hover:text-blue-600 transition-colors">About</Link></li>
+            <li><Link to="/contact" className="hover:text-blue-600 transition-colors">Contact</Link></li>
           </ul>
 
-          {/* Social Icons */}
-         {/* Social Media Icons */}
-        <div className="flex space-x-6 mt-4 md:mt-0">
-          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 text-xl">
-            <FaFacebookF />
-          </a>
-          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 text-xl">
-            <FaTwitter />
-          </a>
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-500 text-xl">
-            <FaInstagram />
-          </a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 text-xl">
-            <FaLinkedinIn />
-          </a>
+            
+            {/* Social Icons */}
+            <div className="flex space-x-4 mt-2 sm:mt-0">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-blue-600 transition-colors text-lg">
+                <FaFacebookF />
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-sky-500 transition-colors text-lg">
+                <FaTwitter />
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-pink-500 transition-colors text-lg">
+                <FaInstagram />
+              </a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-blue-500 transition-colors text-lg">
+                <FaLinkedinIn />
+              </a>
+            </div>
+          </div>
         </div>
-      </div>
         
 
         {/* Copyright */}
-        <div className="relative border-t border-gray-300 text-center py-4 text-sm text-gray-700">
-          © {new Date().getFullYear()} MyBrand. All rights reserved.
+        <div className="border-t border-slate-200 text-center py-4 font-dm text-sm text-slate-600">
+          © {new Date().getFullYear()} MyBlogApp. All rights reserved.
         </div>
-      </div>
+    
     </footer>
   );
 }

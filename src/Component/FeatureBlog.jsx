@@ -2,7 +2,7 @@ const FeatureBlog = () => {
   return (
     <>
       <div className="w-full bg-blue-400">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 pt-8">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 pt-8 pb-16">
           
           {/* Top Blogs Heading */}
           <div className="mx-auto max-w-2xl lg:max-w-none">

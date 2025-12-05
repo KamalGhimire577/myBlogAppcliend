@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../Component/Navbar";
 import Footer from "../Component/Footer";
 import { Link } from "react-router-dom";
+import BackButton from "../Component/BackButton";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -14,7 +15,7 @@ const LoginPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Login Data:", formData);
-    alert("✅ Login Successful!");
+    alert(" Login Successful!");
     setFormData({ email: "", password: "" });
   };
 
@@ -37,9 +38,12 @@ const LoginPage = () => {
           onSubmit={handleSubmit}
           className="relative flex flex-col gap-6 bg-[#270082] p-8 rounded-3xl w-full max-w-md z-10"
         >
-          <h1 className="text-center text-white text-5xl font-bold tracking-wide">
-            Login
-          </h1>
+          <div className="flex items-center justify-between">
+            <BackButton className="w-10 h-10" />
+            <h1 className="text-center text-white text-5xl font-bold tracking-wide flex-1">
+              Login
+            </h1>
+          </div>
 
           <input
             type="email"
