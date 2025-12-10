@@ -1,21 +1,76 @@
 import React, { useState } from "react";
-
 import { Link } from "react-router-dom";
+import { useAppDispatch } from '../hooks/redux';
+import { setLoading, setError, setSuccess } from '../store/slices/statusSlice';
+import { loginAuthor } from '../store/slices/auth/auth.slice';
 import BackButton from "../Component/BackButton";
 
 const LoginPage = () => {
+  const dispatch = useAppDispatch();
   const [formData, setFormData] = useState({ email: "", password: "" });
+  
+  const [errors, setErrors] = useState({
+    email: '',
+    password: ''
+  });
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const validateField = (name: string, value: string) => {
+    let error = '';
+    
+    switch (name) {
+      case 'email':
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) error = 'Please enter a valid email';
+        break;
+      case 'password':
+        if (value.length < 6) error = 'Password must be at least 6 characters';
+        break;
+    }
+    
+    setErrors(prev => ({ ...prev, [name]: error }));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    validateField(name, value);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Login Data:", formData);
-    alert(" Login Successful!");
-    setFormData({ email: "", password: "" });
+    
+    // Validate all fields
+    Object.keys(formData).forEach(key => {
+      validateField(key, formData[key as keyof typeof formData]);
+    });
+    
+    // Check if there are any errors
+    const hasErrors = Object.values(errors).some(error => error !== '');
+    if (hasErrors) {
+      return;
+    }
+    
+    try {
+      dispatch(setLoading(true));
+      const result = await dispatch(loginAuthor(formData)).unwrap();
+      
+      // Store user data in localStorage
+      if (result.user) {
+        localStorage.setItem('user', JSON.stringify(result.user));
+      }
+      
+      dispatch(setSuccess('Login successful!'));
+      setFormData({ email: "", password: "" });
+      
+      // Navigate to home page after success
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000);
+    } catch (error) {
+      dispatch(setError(error as string));
+    }
   };
 
   return (
@@ -35,7 +90,7 @@ const LoginPage = () => {
 
         <form
           onSubmit={handleSubmit}
-          className="relative flex flex-col gap-6 bg-[#270082] p-8 rounded-3xl w-full max-w-md z-10"
+          className="relative flex flex-col gap-6 bg-[#270082] p-8 rounded-3xl w-full max-w-lg z-10"
         >
           <div className="flex items-center justify-between">
             <BackButton className="w-10 h-10" />
@@ -51,17 +106,35 @@ const LoginPage = () => {
             value={formData.email}
             onChange={handleChange}
             required
-            className="w-full px-6 py-3 rounded-full text-xl bg-[#270082] border-2 border-[#7A0BC0] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-[#fa58b6]"
+            className="w-full px-6 py-3 rounded-full text-xl bg-[#270082] border-2 border-orange-500 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 shadow-lg focus:shadow-orange-400/50"
           />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full px-6 py-3 rounded-full text-xl bg-[#270082] border-2 border-[#7A0BC0] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-[#fa58b6]"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="w-full px-6 py-3 pr-14 rounded-full text-xl bg-[#270082] border-2 border-orange-500 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 shadow-lg focus:shadow-orange-400/50"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-5 flex items-center z-10"
+            >
+              {showPassword ? (
+                <svg className="w-5 h-5 text-orange-400 hover:text-orange-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 text-orange-400 hover:text-orange-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              )}
+            </button>
+          </div>
 
           <button
             type="submit"

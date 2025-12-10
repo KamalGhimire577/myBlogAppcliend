@@ -1,39 +1,112 @@
 import React, { useState } from "react";
-
 import { Link } from "react-router-dom";
+import { useAppDispatch } from '../hooks/redux';
+import { setLoading, setError, setSuccess } from '../store/slices/statusSlice';
+import { registerAuthor } from '../store/slices/auth/auth.slice';
 import BackButton from "../Component/BackButton";
 
 const SignupPage = () => {
+  const dispatch = useAppDispatch();
   const [formData, setFormData] = useState({
     userName: "",
     email: "",
     password: "",
     confirmPassword: "",
     phone: "",
-    role: "Author",
+    profile: null as File | null
+  });
+  
+  const [errors, setErrors] = useState({
+    userName: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: ''
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const validateField = (name: string, value: string) => {
+    let error = '';
+    
+    switch (name) {
+      case 'userName':
+        if (value.length < 2) error = 'Name must be at least 2 characters';
+        break;
+      case 'email':
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) error = 'Please enter a valid email';
+        break;
+      case 'phone':
+        const phoneRegex = /^[0-9]{10}$/;
+        if (!phoneRegex.test(value)) error = 'Phone number must be 10 digits';
+        break;
+      case 'password':
+        if (value.length < 6) error = 'Password must be at least 6 characters';
+        break;
+      case 'confirmPassword':
+        if (value !== formData.password) error = 'Passwords do not match';
+        break;
+    }
+    
+    setErrors(prev => ({ ...prev, [name]: error }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, files } = e.target;
+    
+    if (name === 'profile' && files) {
+      const file = files[0];
+      if (file.size > 10 * 1024 * 1024) {
+        dispatch(setError('File size must be less than 10MB'));
+        return;
+      }
+      setFormData({ ...formData, profile: file });
+    } else {
+      setFormData({ ...formData, [name]: value });
+      validateField(name, value);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+    
+    // Validate all fields
+    Object.keys(formData).forEach(key => {
+      if (key !== 'profile') {
+        validateField(key, formData[key as keyof typeof formData] as string);
+      }
+    });
+    
+    // Check if there are any errors
+    const hasErrors = Object.values(errors).some(error => error !== '');
+    if (hasErrors) {
       return;
     }
-    console.log("Signup Data:", formData);
-    alert("✅ Signup Successful!");
-    setFormData({
-      userName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      phone: "",
-      role: "Author",
-    });
+    
+    // Create FormData for file upload
+    const submitData = new FormData();
+    submitData.append('username', formData.userName);
+    submitData.append('email', formData.email);
+    submitData.append('phone', formData.phone);
+    submitData.append('password', formData.password);
+    if (formData.profile) {
+      submitData.append('profile', formData.profile);
+    }
+    
+    try {
+      dispatch(setLoading(true));
+      await dispatch(registerAuthor(submitData)).unwrap();
+      dispatch(setSuccess('Registration successful!'));
+      setFormData({ userName: "", email: "", password: "", confirmPassword: "", phone: "", profile: null });
+      // Navigate to login page after success
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 2000);
+    } catch (error) {
+      dispatch(setError(error as string));
+    }
   };
 
   return (
@@ -90,24 +163,77 @@ const SignupPage = () => {
             required
             className="w-full px-4 py-2 rounded-full text-lg bg-[#270082] border-2 border-[#7A0BC0] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-[#fa58b6]"
           />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 rounded-full text-lg bg-[#270082] border-2 border-[#7A0BC0] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-[#fa58b6]"
-          />
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 rounded-full text-lg bg-[#270082] border-2 border-[#7A0BC0] placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-[#fa58b6]"
-          />
+          <div className="relative">
+            <input
+              type="file"
+              name="profile"
+              onChange={handleChange}
+              accept="image/*"
+              required
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+            <div className="w-full px-4 py-2 rounded-full text-lg bg-[#270082] border-2 border-[#7A0BC0] text-white flex items-center gap-2 cursor-pointer">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span>{formData.profile ? formData.profile.name : 'Choose Profile Photo'}</span>
+            </div>
+          </div>
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 pr-12 rounded-full text-lg bg-[#270082] border-2 border-orange-500 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 shadow-lg focus:shadow-orange-400/50"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-5 flex items-center z-10"
+            >
+              {showPassword ? (
+                <svg className="w-5 h-5 text-orange-400 hover:text-orange-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 text-orange-400 hover:text-orange-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              )}
+            </button>
+          </div>
+          <div className="relative">
+            <input
+              type={showConfirmPassword ? 'text' : 'password'}
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 pr-12 rounded-full text-lg bg-[#270082] border-2 border-orange-500 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 shadow-lg focus:shadow-orange-400/50"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute inset-y-0 right-0 pr-5 flex items-center z-10"
+            >
+              {showConfirmPassword ? (
+                <svg className="w-5 h-5 text-orange-400 hover:text-orange-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 text-orange-400 hover:text-orange-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              )}
+            </button>
+          </div>
 
           <button
             type="submit"

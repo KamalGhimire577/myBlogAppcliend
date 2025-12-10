@@ -7,7 +7,7 @@ import CreateBlogPage from "./Pages/CreateBlogPage"
 import SignupPage from "./Pages/SignupPage"
 import LoginPage from "./Pages/LoginPage"
 import AdminDashbordPage from"./Pages/AdminDashBordPage"
-
+import StatusHandler from "./Component/StatusHandler"
 import SingleBlogPage from "./Pages/SingleBlogPage"
 import AuthorProfilePage from "./Pages/AuthorProfilePage"
 import AdminLoginPage from "./Pages/AdminLoginPage"
@@ -34,6 +34,7 @@ function App() {
 
 
     </Routes>
+    <StatusHandler />
     </BrowserRouter>
      
     </>
