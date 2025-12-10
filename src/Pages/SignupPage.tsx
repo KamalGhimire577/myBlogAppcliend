@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import Navbar from "../Component/Navbar";
-import Footer from "../Component/Footer";
+
 import { Link } from "react-router-dom";
 import BackButton from "../Component/BackButton";
 
@@ -14,12 +13,12 @@ const SignupPage = () => {
     role: "Author",
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
