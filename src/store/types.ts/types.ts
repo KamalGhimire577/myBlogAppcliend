@@ -1,10 +1,8 @@
-export interface IRole{
-  ADMIN:"admin",
-  AUTHOR:"Author"
-}
-export interface ILogin{
-  email:string,
-  password:string
+export type Role = "admin" | "author";
+
+export interface ILogin {
+  email: string;
+  password: string;
 }
 
 export interface IUser {
@@ -13,7 +11,7 @@ export interface IUser {
   email: string;
   password: string;
   phone: string;
-  role: IRole;
+  role: Role;
   profile?: string | null;
   token?: string | null;
   createdAt?: Date;
@@ -63,30 +61,23 @@ export interface IBlogAuthor {
   updatedAt?: Date;
 }
 
-export  interface IStatusState {
+export interface IStatusState {
   loading: boolean;
   error: string | null;
   success: string | null;
 }
 
 export interface IAdminSignup {
-  name: string
-  email: string
-  phone: string
-  password: string
-  confirmPassword: string
-  profile: File | null
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
+  profile: File | null;
 }
 
 export interface IAdminAuthResponse {
-  message: string
-  user?: IUser
-  token?: string
+  message: string;
+  user?: IUser;
+  token?: string;
 }
-
-
-
-
-
-
-

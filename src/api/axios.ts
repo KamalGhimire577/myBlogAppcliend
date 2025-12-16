@@ -9,4 +9,18 @@ const api = axios.create({
   },
 });
 
+// Add token to requests
+api.interceptors.request.use((config) => {
+  const adminToken = localStorage.getItem('adminToken');
+  const authToken = localStorage.getItem('authToken');
+  
+  if (adminToken) {
+    config.headers.Authorization = `Bearer ${adminToken}`;
+  } else if (authToken) {
+    config.headers.Authorization = `Bearer ${authToken}`;
+  }
+  
+  return config;
+});
+
 export default api;
